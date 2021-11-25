@@ -40,11 +40,10 @@ a {
     margin-right: 8px;
   }
   font-size: 12px;
-  margin-right: 30px;
   align-items: center;
   padding: 8px 30px;
   border-radius: 10px;
-  transition: border-color 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
 }
 
 a:hover,
@@ -55,34 +54,65 @@ button:active {
 }
 
 .paid {
-  &::before {
-    background-color: #33d69f;
-  }
   color: #33d69f;
+  margin-right: 30px;
+
   background-color: rgba(51, 214, 160, 0.1);
   border: 0.05rem solid rgba(51, 214, 160, 0.2);
 }
 
 .pending {
-  &::before {
-    background-color: #ff8f00;
-  }
   color: #ff8f00;
+  margin-right: 30px;
+
   background-color: rgba(255, 145, 0, 0.1);
   border: 0.05rem solid rgba(255, 145, 0, 0.2);
 }
 
 .draft {
-  &::before {
-    background-color: #dfe3fa;
-  }
   color: #dfe3fa;
+  margin-right: 30px;
   background-color: rgba(223, 227, 250, 0.1);
   border: 0.05rem solid rgba(223, 227, 250, 0.2);
 }
-.outline {
-  background-color: transparent;
-  border-color: #270041;
-  color: #270041;
+.add-new {
+  color: #dfe3fa;
+  margin: 0;
+  padding: 5px;
+  border-radius: 30px;
+  background-color: #7c5dfa;
+  border: 0.05rem solid #7c5dfa4f;
+}
+.save {
+  border-radius: 30px;
+  color: #dfe3fa;
+  background-color: rgba(124, 93, 250, 0.8);
+  border: 0.05rem solid #7c5dfa4f;
+  &:hover {
+    background-color: rgba(124, 93, 250, 1);
+  }
+}
+.save-draft {
+  border-radius: 30px;
+  color: #dfe3fa;
+  background-color: rgba(223, 227, 250, 0.1);
+  border: 0.05rem solid rgba(223, 227, 250, 0.2);
+  &:hover {
+    background-color: #7c5dfa;
+    border: 0.05rem solid #7c5dfa4f;
+  }
+}
+.cancel {
+  border-radius: 30px;
+  background-color: rgba(223, 227, 250, 0.1);
+  border: 0.05rem solid rgba(223, 227, 250, 0.2);
+  color: #dfe3fa;
+  &:hover {
+    background-color: #ec5757;
+  }
+}
+.accept {
+  background-color: #33d69f;
+  color: #dfe3fa;
 }
 </style>
