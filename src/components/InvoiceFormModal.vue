@@ -1,6 +1,8 @@
 <template>
   <div class="invoice__form-wrapper">
     <form @submit.prevent="submitForm" class="invoice__content">
+      <base-loading v-show="loading" />
+      <!-- <base-close-button class="close-button" /> -->
       <h1 class="text-4xl mb-8">New Invoice</h1>
 
       <!-- Bill from -->
@@ -164,7 +166,7 @@
             @click="addNewInvoiceItem"
             class="flex mt-8 add-item-button justify-center cursor-pointer transition-all duration-500 border border-transparent hover:border-orange  bg-input rounded-full p-2 text-white"
           >
-            <button class="flex items-center gap-1 ">
+            <button type="button" class="flex items-center gap-1 ">
               <img src="@/assets/icon-plus.svg" alt="plus icon" /> Add New Item
             </button>
           </div>
@@ -178,7 +180,7 @@
         </div>
         <div class="right flex gap-4">
           <base-button @click="cancelInvoice" mode="cancel">Cancel</base-button>
-          <base-button mode="save">Save Changes</base-button>
+          <base-button type="submit" @click="publishInvoice" mode="save">Save Changes</base-button>
         </div>
       </div>
     </form>
@@ -186,9 +188,13 @@
 </template>
 
 <script>
+import db from "../firebase/firebaseInit";
+
 import { mapMutations } from 'vuex'
 import { uid } from 'uid'
+import BaseLoading from './UI/BaseLoading.vue';
 export default {
+  components: { BaseLoading },
   data() {
     return {
       dateOptions: { year: 'numeric', month: 'short', day: 'numeric' },
@@ -237,7 +243,71 @@ export default {
       this.invoiceItemList = this.invoiceItemList.filter(
         (item) => item.id !== id
       )
-    }
+    },
+    calcInvoiceTotal() {
+      this.invoiceTotal = 0;
+      this.invoiceItemList.forEach((item) => {
+        this.invoiceTotal += item.total;
+      });
+    },
+    publishInvoice() {
+      this.invoicePending = true;
+    },
+
+    saveDraft() {
+      this.invoiceDraft = true;
+    },
+
+    async uploadInvoice() {
+      if (this.invoiceItemList.length <= 0) {
+        alert("Please ensure you filled out work items!");
+        return;
+      }
+
+      this.loading = true;
+
+      this.calcInvoiceTotal();
+
+      const dataBase = db.collection("invoices").doc();
+
+      await dataBase.set({
+        invoiceId: uid(6),
+        billerStreetAddress: this.billerStreetAddress,
+        billerCity: this.billerCity,
+        billerPostCode: this.billerPostCode,
+        billerCountry: this.billerCountry,
+        clientName: this.clientName,
+        clientEmail: this.clientEmail,
+        clientStreetAddress: this.clientStreetAddress,
+        clientCity: this.clientCity,
+        clientPostCode: this.clientPostCode,
+        clientCountry: this.clientCountry,
+        invoiceDate: this.invoiceDate,
+        invoiceDateUnix: this.invoiceDateUnix,
+        paymentTerms: this.paymentTerms,
+        paymentDueDate: this.paymentDueDate,
+        paymentDueDateUnix: this.paymentDueDateUnix,
+        productDescription: this.productDescription,
+        invoiceItemList: this.invoiceItemList,
+        invoiceTotal: this.invoiceTotal,
+        invoicePending: this.invoicePending,
+        invoiceDraft: this.invoiceDraft,
+        invoicePaid: null,
+      });
+
+      this.loading = false;
+
+      this.TOGGLE_INVOICE_MODAL();
+
+      // this.GET_INVOICES();
+    },
+    submitForm() {
+      // if (this.editInvoice) {
+      //   this.updateInvoice();
+      //   return;
+      // }
+      this.uploadInvoice();
+    },
   },
   watch: {
     paymentTerms() {
@@ -249,9 +319,7 @@ export default {
         this.paymentDueDateUnix
       ).toLocaleDateString('en-us', this.dateOptions)
     },
-    invoiceItemList() {
-      console.log(this.invoiceItemList)
-    }
+    
   },
   created() {
     if (!this.editInvoice) {
@@ -269,17 +337,28 @@ export default {
 .invoice__form-wrapper {
   position: fixed;
   top: 0;
-  left: 0;
+  left: 0rem;
+  padding-top: 5rem;
   width: 100%;
   height: 100vh;
   color: #636476;
-  max-width: 700px;
+  // background-color: rgba(20, 22, 37, 0.5);
+  background-color: transparent;
   overflow: scroll;
   &::-webkit-scrollbar {
     display: none;
   }
+  @media (min-width: 900px) {
+   left: 5rem;
+    top:0
+  }
+
 }
 .invoice__content {
+  position: relative;
+  border-top: 1px solid #636476;
+  border-right: 1px solid #636476;
+  border-bottom: 1px solid #636476;
   max-width: 40rem;
   background: #141625;
   padding: 3.5rem;
@@ -306,7 +385,11 @@ select {
     outline: none;
   }
 }
-
+.close-button {
+  position: absolute;
+  top: -25px;
+  right: -25px;
+}
 .invoice-work {
   .payment {
     gap: 24px;

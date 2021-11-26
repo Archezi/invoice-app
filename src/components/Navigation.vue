@@ -16,6 +16,7 @@ export default {}
   flex-direction: column;
   width: 100vw;
   height: 5rem;
+  z-index: 999;
   border-bottom-right-radius: 1rem;
   border-bottom-left-radius: 1rem;
 
