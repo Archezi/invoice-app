@@ -1,14 +1,29 @@
 <template>
+  <div class="main-wrapper " v-if="invoicesLoaded">
+    
   <navigation class="navigation-bar" />
-  <div class="main-wrapper ">
+    <base-confirmation-modal v-if="confirmationModal" />
+    
     <router-view />
   </div>
 </template>
 <script>
+import {mapState, mapActions} from 'vuex'
 import Navigation from './components/Navigation.vue'
+
 export default {
-  components: { Navigation }
+  components: { Navigation,   },
+  computed: {
+    ...mapState(['invoiceModalForm', 'confirmationModal', 'invoicesLoaded'])
+  },
+  methods: {
+    ...mapActions(['GET_INVOICES'])
+},
+created() {
+  this.GET_INVOICES();
 }
+}
+
 </script>
 
 <style lang="scss">
@@ -42,9 +57,9 @@ export default {
   background-color: #ff8f00;
 }
 .main-wrapper {
-  margin-top: 5rem;
+  padding-top: 5rem;
   @media (min-width: 900px) {
-    margin-top: 5rem;
+    padding-top: 5rem;
   }
 }
 .container {

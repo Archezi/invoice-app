@@ -1,10 +1,10 @@
 <template>
   <base-card>
     <div class="invoice__list-wrapper grid  text-white bg-darkPurple">
-      <div class="invoice__id bg-none ">#555</div>
-      <div class="invoice__date">25.12.2021</div>
-      <div class="invoice__title">Alex Grim</div>
-      <div class="invoice__amount">555</div>
+      <div class="invoice__id bg-none ">{{invoice.invoiceId}}</div>
+      <div class="invoice__date">{{invoice.invoiceDate}}</div>
+      <div class="invoice__title">{{invoice.clientName}}</div>
+      <div class="invoice__amount">{{invoice.invoiceTotal}}</div>
       <div class="invoice__status">
         <base-button class="status-button" mode="pending">Pending</base-button>
         <div class="invoice__arrow-right sm:hidden">></div>
@@ -14,7 +14,10 @@
 </template>
 
 <script>
-export default {}
+export default {
+  name: "invoice",
+  props: ["invoice"],
+}
 </script>
 
 <style lang="scss" scoped>

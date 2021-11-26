@@ -1,5 +1,5 @@
 <template>
-  <div class="invoice__form-wrapper">
+  <div @click="confirmationModalCheck" ref="invoiceWrapper" class="invoice__form-wrapper">
     <form @submit.prevent="submitForm" class="invoice__content">
       <base-loading v-show="loading" />
       <!-- <base-close-button class="close-button" /> -->
@@ -223,7 +223,7 @@ export default {
     }
   },
   computed: {
-    ...mapMutations(['TOGGLE_INVOICE_MODAL'])
+    ...mapMutations(['TOGGLE_INVOICE_MODAL', 'TOGGLE_CONFIRMATION_MODAL'])
   },
   methods: {
     cancelInvoice() {
@@ -308,6 +308,11 @@ export default {
       // }
       this.uploadInvoice();
     },
+    confirmationModalCheck(e) {
+      if (e.target === this.$refs.invoiceWrapper) {
+        this.TOGGLE_CONFIRMATION_MODAL()
+      }
+    }
   },
   watch: {
     paymentTerms() {

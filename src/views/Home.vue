@@ -1,7 +1,7 @@
 <template>
   <div class="home  mx-auto  ">
     <invoice-top-bar class="mb-8" />
-    <invoice-item></invoice-item>
+    <invoice-item v-for="(invoice, index ) in invoiceData" :invoice="invoice" :key="index" />
     <transition name="modal">
       <invoice-form-modal
         v-if="invoiceModalForm"
@@ -21,13 +21,14 @@ export default {
   name: 'Home',
   components: { InvoiceItem, InvoiceTopBar, InvoiceFormModal },
   computed: {
-    ...mapState(['invoiceModalForm'])
+    ...mapState(['invoiceModalForm', 'confirmationModal', 'invoiceData'])
   }
 }
 </script>
 
 <style lang="scss" scoped>
 .home {
+  position: relative;
   max-width: 52.5rem;
   padding: 1.25rem;
 
