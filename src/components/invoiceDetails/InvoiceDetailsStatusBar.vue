@@ -1,5 +1,5 @@
 <template>
-  <base-card class="p-8">
+  <base-card class="card p-8 ">
     <div class="status-bar-wrapper    ">
       <div class="left bg-darkPurple">
         <span class="mr-4">Status</span>
@@ -16,19 +16,28 @@
         </base-button>
       </div>
       <div class="right bg-darkPurple gap-2">
-        <base-button type="button" @click="toggleEditModal" mode="save-draft"
+        <base-button
+          class="button-edit"
+          type="button"
+          @click="toggleEditModal"
+          mode="save-draft"
           >Edit</base-button
         >
-        <base-button @click="deleteInvoice" mode="cancel-active"
+        <base-button
+          class="button-delete"
+          @click="deleteInvoice"
+          mode="cancel-active"
           >Delete</base-button
         >
         <base-button
+          class="button-paid"
           v-if="currentInvoice.invoicePending"
           @click="markAsPaid"
           mode="save"
           >Mark as Paid</base-button
         >
         <base-button
+          class="button-pending"
           v-if="currentInvoice.invoiceDraft || currentInvoice.invoicePaid"
           @click="markAsPending"
           mode="save"
@@ -68,19 +77,52 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.card {
+  padding: 2rem;
+  @media (max-width: 700px) {
+    padding: 1rem;
+  }
+}
 .status-bar-wrapper {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
+  grid-template-areas: 'status status actions actions actions actions';
+  @media (max-width: 700px) {
+    grid-template-columns: repeat(3, 1fr);
+
+    row-gap: 2rem;
+    grid-template-areas:
+      'status status status'
+      'actions actions actions';
+  }
   .left {
-    grid-column: 1 / 3;
+    grid-area: status;
   }
   .right {
-    display: flex;
-
-    grid-column: 3 / 7;
-    grid-row: 1;
+    display: grid;
+    grid-area: actions;
+    width: 100%;
     gap: 0.5rem;
     justify-self: end;
+    grid-template-areas: 'edit delete paid';
+    .button-paid {
+      grid-area: paid;
+    }
+    .button-pending {
+      grid-area: paid;
+    }
+    .button-edit {
+      grid-area: edit;
+    }
+    .button-delete {
+      grid-area: delete;
+    }
+
+    @media (max-width: 700px) {
+      grid-template-areas:
+        'paid paid paid'
+        'edit edit delete';
+    }
   }
 }
 </style>

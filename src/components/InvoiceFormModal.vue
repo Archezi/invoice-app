@@ -468,7 +468,9 @@ export default {
   max-width: 40rem;
   background: #141625;
   padding: 3.5rem;
-
+  @media (max-width: 700px) {
+    padding: 1rem;
+  }
   .location-details,
   .client-location {
     gap: 16px;
@@ -552,5 +554,13 @@ select {
 }
 .add-item-button {
   width: 100%;
+}
+.call-to-action {
+  button {
+    text-align: center;
+    @media (max-width: 700px) {
+      padding: 0.5rem;
+    }
+  }
 }
 </style>

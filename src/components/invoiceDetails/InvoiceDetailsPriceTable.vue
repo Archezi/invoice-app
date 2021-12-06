@@ -1,7 +1,7 @@
 <template>
-  <base-card class="pricing-wrapper p-8 flex flex-col gap-8   relative">
-    <div class="pricing-header flex justify-items-end text-formText text-xl ">
-      <p class="item-name flex justify-self-start">Item Name</p>
+  <base-card class="pricing-wrapper flex flex-col gap-8   relative">
+    <div class="pricing-header  text-formText text-xl ">
+      <p class="item-name ">Item Name</p>
       <p class="item-qty">QTY</p>
       <p class="item-price">Price</p>
       <p class="item-total">Total</p>
@@ -9,9 +9,9 @@
     <div
       v-for="(item, index) in currentInvoice.invoiceItemList"
       :key="index"
-      class="item-details flex justify-items-end text-white"
+      class="item-details   text-white"
     >
-      <p class="item-name flex justify-self-start">{{ item.itemName }}</p>
+      <p class="item-name ">{{ item.itemName }}</p>
       <p class="item-qty">{{ item.qty }}</p>
       <p class="item-price">&euro;{{ item.price }}</p>
       <p class="item-total">&euro;{{ item.total }}</p>
@@ -38,13 +38,34 @@ export default {
 .pricing-wrapper {
   padding-bottom: 7rem;
 }
+.pricing-header {
+}
 .pricing-header,
 .item-details {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  justify-items: end;
 
+  column-gap: 0.5rem;
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-areas: 'name name name qty price total';
+  @media (max-width: 700px) {
+    column-gap: 1rem;
+  }
   .item-name {
-    grid-column: 1 / 4;
+    grid-area: name;
+    justify-self: start;
+  }
+  .item-qty {
+    grid-area: qty;
+    @media (max-width: 700px) {
+      justify-self: start;
+    }
+  }
+  .item-price {
+    grid-area: price;
+  }
+  .item-total {
+    grid-area: total;
   }
 }
 .price-total {

@@ -1,5 +1,5 @@
 <template>
-  <base-card class="p-8">
+  <base-card>
     <div class="invoice-details-wrapper flex flex-col gap-8">
       <!-- Invoice details top section -->
       <div class="invoice-details-top ">

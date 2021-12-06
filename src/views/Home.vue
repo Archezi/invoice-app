@@ -69,6 +69,9 @@ export default {
   position: relative;
   max-width: 52.5rem;
   padding: 1.25rem;
+  @media (max-width: 700px) {
+    padding: 0;
+  }
 
   // transition for invoice modal
 

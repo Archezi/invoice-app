@@ -32,15 +32,9 @@ export default {
 <style scoped lang="scss">
 button,
 a {
-  &::before {
-    content: '';
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    margin-right: 8px;
-  }
   font-size: 12px;
   align-items: center;
+  text-align: center;
   padding: 8px 30px;
   border-radius: 10px;
   transition: all 0.2s ease-in-out;

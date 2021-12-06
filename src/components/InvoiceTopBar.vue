@@ -77,16 +77,50 @@ export default {
 
 <style lang="scss" scoped>
 .header {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-areas: 'left right';
+  @media (max-width: 700px) {
+    // grid-template-columns: repeat(1, 1fr);
+    // grid-template-areas:
+    //   'left '
+    //   'right ';
+  }
   color: white;
   &__left,
   &__right {
-    flex: 1;
+    grid-area: left;
   }
   &__right {
-    display: flex;
+    grid-area: right;
+    display: grid;
+    grid-template-areas: 'filterMenu addButton';
+    grid-auto-flow: column;
     justify-content: flex-end;
     align-items: center;
+    @media (max-width: 700px) {
+      grid-template-areas:
+        'addButton '
+        'filterMenu ';
+
+      .filter {
+        margin-right: 0;
+      }
+    }
+    .filter {
+      grid-area: filterMenu;
+    }
+    .add-button {
+      grid-area: addButton;
+    }
+    @media (max-width: 700px) {
+      // grid-template-columns: repeat(1, 1fr);
+      // grid-template-areas:
+      //   'left '
+      //   'right ';
+
+      flex-direction: row;
+    }
   }
 }
 
