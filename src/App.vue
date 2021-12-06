@@ -1,29 +1,38 @@
 <template>
-  <div class="main-wrapper " v-if="invoicesLoaded">
-    
-  <navigation class="navigation-bar" />
+  <div
+    class="main-wrapper bg-mainBackground min-h-screen "
+    v-if="invoicesLoaded"
+  >
+    <navigation class="navigation-bar" />
     <base-confirmation-modal v-if="confirmationModal" />
-    
-    <router-view />
+    <transition name="modal">
+      <invoice-form-modal
+        v-if="invoiceModalForm"
+        class="invoice-modal"
+      ></invoice-form-modal>
+    </transition>
+    <div class="main-container mx-auto">
+      <router-view />
+    </div>
   </div>
 </template>
 <script>
-import {mapState, mapActions} from 'vuex'
+import { mapState, mapActions } from 'vuex'
+import InvoiceFormModal from './components/InvoiceFormModal.vue'
 import Navigation from './components/Navigation.vue'
 
 export default {
-  components: { Navigation,   },
+  components: { Navigation, InvoiceFormModal },
   computed: {
     ...mapState(['invoiceModalForm', 'confirmationModal', 'invoicesLoaded'])
   },
   methods: {
     ...mapActions(['GET_INVOICES'])
-},
-created() {
-  this.GET_INVOICES();
+  },
+  created() {
+    this.GET_INVOICES()
+  }
 }
-}
-
 </script>
 
 <style lang="scss">
@@ -34,9 +43,13 @@ created() {
   padding: 0;
   box-sizing: border-box;
   font-family: 'Poppins', sans-serif;
-  background-color: #141625;
+  // background-color: #141625;
 }
-
+.main-container {
+  position: relative;
+  max-width: 52.5rem;
+  padding: 1.25rem;
+}
 .dark-purple {
   background-color: #252945;
 }
@@ -81,6 +94,15 @@ created() {
   position: fixed;
   top: 0;
   left: 0;
+}
+.modal-enter-active,
+.modal-leave-active {
+  transition: 0.8s ease all;
+}
+
+.modal-enter-from,
+.modal-leave-to {
+  transform: translateX(-700px);
 }
 // Status Button Styling
 </style>

@@ -102,6 +102,15 @@ button:active {
     border: 0.05rem solid #7c5dfa4f;
   }
 }
+.cancel-active {
+  color: #dfe3fa;
+  background-color: rgba(236, 87, 87, 0.8);
+  border: 0.05rem solid rgba(236, 87, 87, 0.5);
+  border-radius: 30px;
+  &:hover {
+    background-color: rgba(236, 87, 87, 1);
+  }
+}
 .cancel {
   border-radius: 30px;
   background-color: rgba(223, 227, 250, 0.1);

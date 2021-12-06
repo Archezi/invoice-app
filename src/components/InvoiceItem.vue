@@ -1,22 +1,43 @@
 <template>
-  <base-card>
-    <div class="invoice__list-wrapper grid  text-white bg-darkPurple">
-      <div class="invoice__id bg-none ">{{invoice.invoiceId}}</div>
-      <div class="invoice__date">{{invoice.invoiceDate}}</div>
-      <div class="invoice__title">{{invoice.clientName}}</div>
-      <div class="invoice__amount">{{invoice.invoiceTotal}}</div>
-      <div class="invoice__status">
-        <base-button class="status-button" mode="pending">Pending</base-button>
-        <div class="invoice__arrow-right sm:hidden">></div>
+  :
+  <router-link
+    :to="{ name: 'Invoice', params: { invoiceId: invoice.invoiceId } }"
+  >
+    <base-card>
+      <div class="invoice__list-wrapper grid  text-white bg-darkPurple">
+        <div class="invoice__id bg-none ">{{ invoice.invoiceId }}</div>
+        <div class="invoice__date">{{ invoice.invoiceDate }}</div>
+        <div class="invoice__title">{{ invoice.clientName }}</div>
+        <div class="invoice__amount">&euro;{{ invoice.invoiceTotal }}</div>
+        <div class="invoice__status">
+          <base-button class="status-button" :mode="invoiceStatus">{{
+            invoiceStatus
+          }}</base-button>
+          <div class="invoice__arrow-right sm:hidden">></div>
+        </div>
       </div>
-    </div>
-  </base-card>
+    </base-card>
+  </router-link>
 </template>
 
 <script>
 export default {
-  name: "invoice",
-  props: ["invoice"],
+  name: 'invoice',
+  props: ['invoice'],
+  computed: {
+    invoiceStatus() {
+      if (this.invoice.invoicePending) {
+        return 'pending'
+      } else if (this.invoice.invoiceDraft) {
+        return 'draft'
+      } else if (this.invoice.invoicePaid) {
+        return 'paid'
+      } else {
+        return 'different status'
+      }
+    }
+  },
+  methods: {}
 }
 </script>
 

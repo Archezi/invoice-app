@@ -1,35 +1,48 @@
 <template>
   <div class="modal flex">
     <div class="modal-content ">
-      <p class="p-8">Are you sure you want to exit? Your changes will not be saved?</p>
+      <p class="p-8">
+        Are you sure you want to exit? Your changes will not be saved?
+      </p>
       <div class="actions flex gap-4 bg-transparent ">
-        <button @click="closeModal" class="purple p-2 rounded-full">Return</button>
-        <button @click="closeInvoice" class="red p-2 rounded-full">Close</button>
+        <button @click="closeModal" class="purple p-2 rounded-full">
+          Return
+        </button>
+        <button @click="closeInvoice" class="red p-2 rounded-full">
+          Close
+        </button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { mapMutations } from "vuex";
+import { mapMutations, mapState } from 'vuex'
 export default {
-  name: "modal",
+  name: 'modal',
   methods: {
-    ...mapMutations(["TOGGLE_CONFIRMATION_MODAL", "TOGGLE_INVOICE_MODAL"]),
+    ...mapMutations([
+      'TOGGLE_CONFIRMATION_MODAL',
+      'TOGGLE_INVOICE_MODAL',
+      'TOGGLE_EDIT_INVOICE'
+    ]),
 
     closeModal() {
-      this.TOGGLE_CONFIRMATION_MODAL();
+      this.TOGGLE_CONFIRMATION_MODAL()
     },
 
     closeInvoice() {
-      this.TOGGLE_CONFIRMATION_MODAL();
-      this.TOGGLE_INVOICE_MODAL();
-      
-    },
+      this.TOGGLE_CONFIRMATION_MODAL()
+      this.TOGGLE_INVOICE_MODAL()
+      if (this.editInvoice) {
+        this.TOGGLE_EDIT_INVOICE()
+      }
+    }
   },
   computed: {
-  },
-};
+    ...mapState(['editInvoice'])
+  }
+}
 </script>
 
 <style lang="scss" scoped>

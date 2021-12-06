@@ -1,9 +1,14 @@
 <template>
-  <div @click="confirmationModalCheck" ref="invoiceWrapper" class="invoice__form-wrapper">
+  <div
+    @click="confirmationModalCheck"
+    ref="invoiceWrapper"
+    class="invoice__form-wrapper"
+  >
     <form @submit.prevent="submitForm" class="invoice__content">
       <base-loading v-show="loading" />
       <!-- <base-close-button class="close-button" /> -->
-      <h1 class="text-4xl mb-8">New Invoice</h1>
+      <h1 v-if="!editInvoice" class="text-4xl mb-8">New Invoice</h1>
+      <h1 v-else class="text-4xl mb-8">Edit Invoice</h1>
 
       <!-- Bill from -->
       <div class="bill_from mb-8">
@@ -176,11 +181,27 @@
       <!-- Call to action buttons -->
       <div class="call-to-action mt-8 flex gap-4 justify-between">
         <div class="left">
-          <base-button mode="save-draft">Save draft</base-button>
+          <base-button v-if="!editInvoice" mode="save-draft"
+            >Save draft</base-button
+          >
+          <base-button v-else @click="cancelInvoice" mode="cancel"
+            >Cancel</base-button
+          >
         </div>
         <div class="right flex gap-4">
-          <base-button @click="cancelInvoice" mode="cancel">Cancel</base-button>
-          <base-button type="submit" @click="publishInvoice" mode="save">Save Changes</base-button>
+          <base-button v-if="!editInvoice" @click="cancelInvoice" mode="cancel"
+            >Cancel</base-button
+          >
+          <base-button
+            v-if="!editInvoice"
+            type="submit"
+            @click="publishInvoice"
+            mode="save"
+            >Save Changes</base-button
+          >
+          <base-button v-else type="submit" mode="save"
+            >Update Invoice</base-button
+          >
         </div>
       </div>
     </form>
@@ -188,11 +209,11 @@
 </template>
 
 <script>
-import db from "../firebase/firebaseInit";
+import db from '../firebase/firebaseInit'
 
-import { mapMutations } from 'vuex'
+import { mapMutations, mapActions, mapState } from 'vuex'
 import { uid } from 'uid'
-import BaseLoading from './UI/BaseLoading.vue';
+import BaseLoading from './UI/BaseLoading.vue'
 export default {
   components: { BaseLoading },
   data() {
@@ -222,13 +243,58 @@ export default {
       invoiceTotal: 0
     }
   },
+  created() {
+    if (!this.editInvoice) {
+      this.invoiceDateUnix = Date.now()
+      this.invoiceDate = new Date(this.invoiceDateUnix).toLocaleDateString(
+        'en-us',
+        this.dateOptions
+      )
+    }
+    if (this.editInvoice) {
+      const currentInvoice = this.currentInvoiceArray[0]
+      this.docId = currentInvoice.docId
+      this.billerStreetAddress = currentInvoice.billerStreetAddress
+      this.billerCity = currentInvoice.billerCity
+      this.billerPostCode = currentInvoice.billerPostCode
+      this.billerCountry = currentInvoice.billerCountry
+      this.clientName = currentInvoice.clientName
+      this.clientEmail = currentInvoice.clientEmail
+      this.clientStreetAddress = currentInvoice.clientStreetAddress
+      this.clientCity = currentInvoice.clientCity
+      this.clientPostCode = currentInvoice.clientPostCode
+      this.clientCountry = currentInvoice.clientCountry
+      this.invoiceDateUnix = currentInvoice.invoiceDateUnix
+      this.invoiceDate = currentInvoice.invoiceDate
+      this.paymentTerms = currentInvoice.paymentTerms
+      this.paymentDueDateUnix = currentInvoice.paymentDueDateUnix
+      this.paymentDueDate = currentInvoice.paymentDueDate
+      this.productDescription = currentInvoice.productDescription
+      this.invoicePending = currentInvoice.invoicePending
+      this.invoiceDraft = currentInvoice.invoiceDraft
+      this.invoiceItemList = currentInvoice.invoiceItemList
+      this.invoiceTotal = currentInvoice.invoiceTotal
+    }
+  },
   computed: {
-    ...mapMutations(['TOGGLE_INVOICE_MODAL', 'TOGGLE_CONFIRMATION_MODAL'])
+    ...mapState(['editInvoice', 'currentInvoiceArray'])
   },
   methods: {
+    ...mapMutations([
+      'TOGGLE_INVOICE_MODAL',
+      'TOGGLE_CONFIRMATION_MODAL',
+      'TOGGLE_EDIT_INVOICE'
+    ]),
+
+    ...mapActions(['UPDATE_INVOICE', 'GET_INVOICES']),
+
     cancelInvoice() {
       this.TOGGLE_INVOICE_MODAL()
+      if (!this.editInvoice) {
+        this.TOGGLE_EDIT_INVOICE()
+      }
     },
+
     addNewInvoiceItem() {
       this.invoiceItemList.push({
         id: uid(),
@@ -239,36 +305,39 @@ export default {
       })
       console.log(this.invoiceItemList)
     },
+
     deleteInvoiceItem(id) {
       this.invoiceItemList = this.invoiceItemList.filter(
         (item) => item.id !== id
       )
     },
+
     calcInvoiceTotal() {
-      this.invoiceTotal = 0;
+      this.invoiceTotal = 0
       this.invoiceItemList.forEach((item) => {
-        this.invoiceTotal += item.total;
-      });
+        this.invoiceTotal += item.total
+      })
     },
+
     publishInvoice() {
-      this.invoicePending = true;
+      this.invoicePending = true
     },
 
     saveDraft() {
-      this.invoiceDraft = true;
+      this.invoiceDraft = true
     },
 
     async uploadInvoice() {
       if (this.invoiceItemList.length <= 0) {
-        alert("Please ensure you filled out work items!");
-        return;
+        alert('Please ensure you filled out work items!')
+        return
       }
 
-      this.loading = true;
+      this.loading = true
 
-      this.calcInvoiceTotal();
+      this.calcInvoiceTotal()
 
-      const dataBase = db.collection("invoices").doc();
+      const dataBase = db.collection('invoices').doc()
 
       await dataBase.set({
         invoiceId: uid(6),
@@ -292,21 +361,63 @@ export default {
         invoiceTotal: this.invoiceTotal,
         invoicePending: this.invoicePending,
         invoiceDraft: this.invoiceDraft,
-        invoicePaid: null,
-      });
+        invoicePaid: null
+      })
 
-      this.loading = false;
+      this.loading = false
 
-      this.TOGGLE_INVOICE_MODAL();
+      this.TOGGLE_INVOICE_MODAL()
+
+      this.GET_INVOICES()
+    },
+    async updateInvoice() {
+      if (this.invoiceItemList.length <= 0) {
+        alert('Please ensure you filled out work items!')
+        return
+      }
+
+      this.loading = true
+
+      this.calcInvoiceTotal()
+
+      const dataBase = db.collection('invoices').doc(this.docId)
+
+      await dataBase.update({
+        billerStreetAddress: this.billerStreetAddress,
+        billerCity: this.billerCity,
+        billerPostCode: this.billerPostCode,
+        billerCountry: this.billerCountry,
+        clientName: this.clientName,
+        clientEmail: this.clientEmail,
+        clientStreetAddress: this.clientStreetAddress,
+        clientCity: this.clientCity,
+        clientPostCode: this.clientPostCode,
+        clientCountry: this.clientCountry,
+        paymentTerms: this.paymentTerms,
+        paymentDueDate: this.paymentDueDate,
+        paymentDueDateUnix: this.paymentDueDateUnix,
+        productDescription: this.productDescription,
+        invoiceItemList: this.invoiceItemList,
+        invoiceTotal: this.invoiceTotal
+      })
+
+      this.loading = false
+
+      const data = {
+        docId: this.docId,
+        routeId: this.$route.params.invoiceId
+      }
+
+      this.UPDATE_INVOICE(data)
 
       // this.GET_INVOICES();
     },
     submitForm() {
-      // if (this.editInvoice) {
-      //   this.updateInvoice();
-      //   return;
-      // }
-      this.uploadInvoice();
+      if (this.editInvoice) {
+        this.updateInvoice()
+        return
+      }
+      this.uploadInvoice()
     },
     confirmationModalCheck(e) {
       if (e.target === this.$refs.invoiceWrapper) {
@@ -323,16 +434,6 @@ export default {
       this.paymentDueDate = new Date(
         this.paymentDueDateUnix
       ).toLocaleDateString('en-us', this.dateOptions)
-    },
-    
-  },
-  created() {
-    if (!this.editInvoice) {
-      this.invoiceDateUnix = Date.now()
-      this.invoiceDate = new Date(this.invoiceDateUnix).toLocaleDateString(
-        'en-us',
-        this.dateOptions
-      )
     }
   }
 }
@@ -347,23 +448,23 @@ export default {
   width: 100%;
   height: 100vh;
   color: #636476;
-  // background-color: rgba(20, 22, 37, 0.5);
+  z-index: 10;
+  background-color: rgba(20, 22, 37, 0.5);
   background-color: transparent;
   overflow: scroll;
   &::-webkit-scrollbar {
     display: none;
   }
   @media (min-width: 900px) {
-   left: 5rem;
-    top:0
+    left: 5rem;
+    top: 0;
   }
-
 }
 .invoice__content {
   position: relative;
-  border-top: 1px solid #636476;
-  border-right: 1px solid #636476;
-  border-bottom: 1px solid #636476;
+  // border-top: 1px solid #636476;
+  // border-right: 1px solid #636476;
+  // border-bottom: 1px solid #636476;
   max-width: 40rem;
   background: #141625;
   padding: 3.5rem;
