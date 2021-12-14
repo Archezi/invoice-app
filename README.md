@@ -1,5 +1,6 @@
-# invoice
-
+# ** Invoice App **
+This website was made with Vuejs hre is the linke to live site 
+[https://portfolio-vue-386d3.web.app/work/project7]
 ## Project setup
 ```
 npm install
